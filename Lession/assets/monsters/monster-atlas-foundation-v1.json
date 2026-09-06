@@ -1,57 +1,153 @@
 {
-  "version": 1,
-  "image": "monster-atlas-foundation-v1.png",
-  "width": 512,
-  "height": 128,
-  "cellSize": 128,
-  "frames": {
-    "rm1_1": {
-      "name": "符號芽獸",
-      "family": "plant",
-      "x": 0,
-      "y": 0.0,
-      "width": 128,
-      "height": 128,
-      "contentX": 15.0,
-      "contentY": 8.0,
-      "contentWidth": 97,
-      "contentHeight": 112
-    },
-    "rm2_2": {
-      "name": "方程水狼",
-      "family": "beast",
-      "x": 128,
-      "y": 0.0,
-      "width": 128,
-      "height": 128,
-      "contentX": 136.0,
-      "contentY": 14.0,
-      "contentWidth": 112,
-      "contentHeight": 106
-    },
-    "rm3_3": {
-      "name": "畢氏銀蛛",
-      "family": "insect",
-      "x": 256,
-      "y": 0.0,
-      "width": 128,
-      "height": 128,
-      "contentX": 264.0,
-      "contentY": 17.0,
-      "contentWidth": 112,
-      "contentHeight": 103
-    },
-    "rm6_5": {
-      "name": "圓柱銀兵",
-      "family": "construct",
-      "x": 384,
-      "y": 0.0,
-      "width": 128,
-      "height": 128,
-      "contentX": 395.0,
-      "contentY": 8.0,
-      "contentWidth": 106,
-      "contentHeight": 112
-    }
-  }
+    "version":  3,
+    "image":  "monster-atlas-foundation-v1.png",
+    "width":  256,
+    "height":  192,
+    "cellSize":  64,
+    "frames":  {
+                   "rm1_1":  {
+                                 "name":  "符號芽獸",
+                                 "family":  "plant",
+                                 "x":  0,
+                                 "y":  0,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  7,
+                                 "contentY":  3,
+                                 "contentWidth":  50,
+                                 "contentHeight":  58
+                             },
+                   "rm2_2":  {
+                                 "name":  "方程齒狼",
+                                 "family":  "beast",
+                                 "x":  64,
+                                 "y":  0,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  67,
+                                 "contentY":  6,
+                                 "contentWidth":  58,
+                                 "contentHeight":  55
+                             },
+                   "rm3_3":  {
+                                 "name":  "畢氏銀蛛",
+                                 "family":  "insect",
+                                 "x":  128,
+                                 "y":  0,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  131,
+                                 "contentY":  8,
+                                 "contentWidth":  58,
+                                 "contentHeight":  53
+                             },
+                   "rm6_5":  {
+                                 "name":  "圓柱銀兵",
+                                 "family":  "construct",
+                                 "x":  192,
+                                 "y":  0,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  196,
+                                 "contentY":  3,
+                                 "contentWidth":  55,
+                                 "contentHeight":  58
+                             },
+                   "rm1_10":  {
+                                  "name":  "數線刺蝟",
+                                  "family":  "beast",
+                                  "x":  0,
+                                  "y":  64,
+                                  "width":  64,
+                                  "height":  64,
+                                  "contentX":  3,
+                                  "contentY":  74,
+                                  "contentWidth":  58,
+                                  "contentHeight":  51
+                              },
+                   "rm4_6":  {
+                                 "name":  "外角金獅",
+                                 "family":  "beast",
+                                 "x":  64,
+                                 "y":  64,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  68,
+                                 "contentY":  67,
+                                 "contentWidth":  56,
+                                 "contentHeight":  58
+                             },
+                   "rm5_7":  {
+                                 "name":  "弦月水龍",
+                                 "family":  "dragon",
+                                 "x":  128,
+                                 "y":  64,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  132,
+                                 "contentY":  67,
+                                 "contentWidth":  56,
+                                 "contentHeight":  58
+                             },
+                   "rm6_8":  {
+                                 "name":  "盒狀圖甲蟲",
+                                 "family":  "insect",
+                                 "x":  192,
+                                 "y":  64,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  195,
+                                 "contentY":  69,
+                                 "contentWidth":  58,
+                                 "contentHeight":  56
+                             },
+                   "rm3_1":  {
+                                 "name":  "根號火狐",
+                                 "family":  "beast",
+                                 "x":  0,
+                                 "y":  128,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  3,
+                                 "contentY":  131,
+                                 "contentWidth":  57,
+                                 "contentHeight":  58
+                             },
+                   "rm4_2":  {
+                                 "name":  "等比翠蜥",
+                                 "family":  "serpent",
+                                 "x":  64,
+                                 "y":  128,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  67,
+                                 "contentY":  144,
+                                 "contentWidth":  58,
+                                 "contentHeight":  45
+                             },
+                   "rm5_6":  {
+                                 "name":  "切線紫蠍",
+                                 "family":  "insect",
+                                 "x":  128,
+                                 "y":  128,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  133,
+                                 "contentY":  131,
+                                 "contentWidth":  54,
+                                 "contentHeight":  58
+                             },
+                   "rm1_6":  {
+                                 "name":  "整數泥偶",
+                                 "family":  "construct",
+                                 "x":  192,
+                                 "y":  128,
+                                 "width":  64,
+                                 "height":  64,
+                                 "contentX":  196,
+                                 "contentY":  131,
+                                 "contentWidth":  55,
+                                 "contentHeight":  58
+                             }
+               }
 }

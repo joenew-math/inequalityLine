@@ -1,8 +1,8 @@
 {
-  "version": 1,
-  "cellSize": 128,
+  "version": 3,
+  "cellSize": 64,
   "columns": 4,
-  "padding": 8,
+  "padding": 3,
   "outputImage": "monster-atlas-foundation-v1.png",
   "outputData": "monster-atlas-foundation-v1.json",
   "outputScript": "monster-atlas-foundation-v1.js",
@@ -15,7 +15,7 @@
     },
     {
       "id": "rm2_2",
-      "name": "方程水狼",
+      "name": "方程齒狼",
       "family": "beast",
       "source": "art-source/monsters/equation-water-wolf-v1.png"
     },
@@ -30,6 +30,54 @@
       "name": "圓柱銀兵",
       "family": "construct",
       "source": "art-source/monsters/cylinder-silver-soldier-v1.png"
+    },
+    {
+      "id": "rm1_10",
+      "name": "數線刺蝟",
+      "family": "beast",
+      "source": "art-source/monsters/number-line-hedgehog-v1.png"
+    },
+    {
+      "id": "rm4_6",
+      "name": "外角金獅",
+      "family": "beast",
+      "source": "art-source/monsters/exterior-angle-golden-lion-v1.png"
+    },
+    {
+      "id": "rm5_7",
+      "name": "弦月水龍",
+      "family": "dragon",
+      "source": "art-source/monsters/chord-moon-water-dragon-v1.png"
+    },
+    {
+      "id": "rm6_8",
+      "name": "盒狀圖甲蟲",
+      "family": "insect",
+      "source": "art-source/monsters/box-plot-beetle-v1.png"
+    },
+    {
+      "id": "rm3_1",
+      "name": "根號火狐",
+      "family": "beast",
+      "source": "art-source/monsters/radical-fire-fox-v1.png"
+    },
+    {
+      "id": "rm4_2",
+      "name": "等比翠蜥",
+      "family": "serpent",
+      "source": "art-source/monsters/geometric-emerald-lizard-v1.png"
+    },
+    {
+      "id": "rm5_6",
+      "name": "切線紫蠍",
+      "family": "insect",
+      "source": "art-source/monsters/tangent-violet-scorpion-v1.png"
+    },
+    {
+      "id": "rm1_6",
+      "name": "整數泥偶",
+      "family": "construct",
+      "source": "art-source/monsters/integer-clay-golem-v1.png"
     }
   ]
 }

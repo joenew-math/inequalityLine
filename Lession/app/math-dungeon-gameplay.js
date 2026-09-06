@@ -77,7 +77,7 @@ function teacherPrologueEncounter(){
     <div class="teacher-dialogue"><canvas id="prologueTeacher" class="teacher-pixel"></canvas><div>
       <h1>數學老師擋住了樓梯</h1><p>「先等等。卡牌、裝備和金幣看起來很強，但它們還不是你真正的力量。」</p>
       <p>「想走進真正的地下城，先讓我看看你面對未知題目時，是否願意重新思考。」</p></div></div>
-    <button class="go" id="teacherChallenge">📘 接受課本試煉</button>`,null,el=>{
+    <button class="go" id="teacherChallenge">📘 開始卡牌試煉</button>`,null,el=>{
       if(el.id!=='teacherChallenge')return false;
       setTimeout(teacherPrologueBattle,20);return true;
     });
@@ -85,32 +85,26 @@ function teacherPrologueEncounter(){
 }
 
 function teacherPrologueBattle(){
-  overlay(`<div class="kicker">FORCED LESSON BATTLE</div><h1>數學老師・課本試煉</h1>
-    <div class="teacher-battle" id="teacherBattleScene">
-      <canvas id="teacherBattleSprite" class="teacher-pixel battle"></canvas>
-      <div class="teacher-formula-ring"><span>Σ</span><span>π</span><span>x²</span><span>√</span></div>
-      <div class="teacher-open-book">📖</div>
-      <div class="teacher-book b1">📘</div><div class="teacher-book b2">📗</div><div class="teacher-book b3">📙</div>
-      <div class="teacher-page p1"></div><div class="teacher-page p2"></div><div class="teacher-page p3"></div><div class="teacher-page p4"></div>
-      <div class="teacher-impact">100!</div><div class="teacher-attack-name">奧義・課本演算連擊</div>
-      <div class="teacher-battle-line">「這場不是比裝備，是練習如何面對不會的題目。」</div>
-    </div>
-    <div class="teacher-player-hp"><span>你的生命</span><i><b id="teacherHpDrain"></b></i><em id="teacherHpText">${S.hp}/${S.maxhp}</em></div>
-    <button class="go" id="teacherBattleGo">準備好了</button>`,null,el=>{
-      if(el.id!=='teacherBattleGo')return false;
-      const scene=$('teacherBattleScene'),btn=$('teacherBattleGo');btn.disabled=true;btn.textContent='課本連擊！';scene.classList.add('active');
-      const bar=$('teacherHpDrain'),txt=$('teacherHpText');bar.style.width='0%';
-      setTimeout(()=>{txt.textContent='0/'+S.maxhp;S.hp=0;},2750);
-      setTimeout(()=>teacherPrologueFallen(0),3600);return false;
-    });
-  paintPrologueTeacher('teacherBattleSprite');
+  running=false;
+  const teacher={kind:'mathTeacherFinal',art:'mathTeacherFinal',n:'數學老師・課本試煉',uid:'mathTeacherPrologue',
+    max:99999,hp:99999,atk:Math.max(28,Math.round(S.maxhp*.38)),burn:0,dead:false,shield:0,
+    act:'atk',intent:Math.max(28,Math.round(S.maxhp*.38)),row:0,boss:false,teacherBoss:true,fresh:true,
+    expr:'先用卡牌試著迎戰',abilityName:'奧義・課本演算連擊'};
+  B={foes:[teacher],draw:freshBattleDraw(),disc:[],hand:[],thr:-1,chain:0,nextMul:1,block:0,best:0,over:false,
+    waves:1,target:0,open:'normal',skipEnemy:0,firstTurn:true,pendingLoot:0,lootGold:0,lootXp:0,lootKills:0,
+    levelsGained:0,lootAbsorbing:false,lootCollected:false,victoryQueued:false,victoryFinalizing:false,
+    delta:1,trait:null,cur:[],bestArr:[],chains:[],ults:{},teacherPrologue:true};
+  PARTY.forEach(m=>m.used=false);S.deck.forEach(o=>{delete o._dealt;});
+  $('dungeon').classList.add('hide');const bt=$('battle');
+  bt.classList.remove('hide','enter','teacher-final-battle');void bt.offsetWidth;bt.classList.add('enter');
+  $('veil').classList.add('hide');drawFieldBg();newTurn();
+  toast('📘 使用手牌、魔力與連擊迎戰數學老師',3000);
+  setTimeout(()=>teacherTextbookAttackFx(teacher,'課本試煉・開卷'),420);
 }
 
 const TEACHER_PROLOGUE_LINES=[
-  {title:'失敗不是終點',text:'「先別急著站起來。遇到不會的題目而倒下，不代表你不擅長數學；它只是告訴你，下一次可以從哪裡開始練習。」'},
-  {title:'輪迴會留下學習',text:'「每一輪答對的題目都會化成知識點。卡牌與金幣會重置，但你理解過的方法、錯題紀錄與輪迴強化會留下。」'},
-  {title:'不停練習才能變強',text:'「把不會的題目拆小、再做一次、說出理由。真正的變強，不是一次全對，而是每次都比上次多懂一點。」'},
-  {title:'享受探索數學',text:'「最後，當你好奇規律、願意驗算，也真心享受找到答案的過程，原本困難的關卡就會變得輕鬆。」'}
+  {title:'失敗也是線索',text:'「倒下不代表你不擅長數學，它只是告訴你下一次該從哪裡開始練習。」'},
+  {title:'練習會留下力量',text:'「資源會重置，但理解、錯題紀錄與輪迴強化會留下。保持好奇，享受找到答案的過程。」'}
 ];
 
 function teacherPrologueFallen(index){
@@ -119,7 +113,7 @@ function teacherPrologueFallen(index){
       <canvas id="fallenTeacher" class="fallen-teacher"></canvas><div class="fallen-floor"></div></div>
     <div class="kicker">GROUND VIEW · ${index+1}/${TEACHER_PROLOGUE_LINES.length}</div><h1>${hesc(line.title)}</h1>
     <div class="desc teacher-lesson">${line.text}</div>
-    <button class="go" id="teacherLessonNext">${last?'接受真正的地下城規則':'聽老師繼續說'}</button>`,null,el=>{
+    <button class="go" id="teacherLessonNext">${last?'進入真正的地下城':'下一步'}</button>`,null,el=>{
       if(el.id!=='teacherLessonNext')return false;
       setTimeout(()=>last?teacherPrologueConfiscation():teacherPrologueFallen(index+1),20);return true;
     });
@@ -779,6 +773,13 @@ if(MONSTER_ATLAS_IMAGE){
   MONSTER_ATLAS_IMAGE.decoding='async';
   MONSTER_ATLAS_IMAGE.onload=()=>{
     if(typeof PET_CARD_ART_CACHE!=='undefined')PET_CARD_ART_CACHE.clear();
+    document.querySelectorAll('.monsterSprite[data-monster-kind]').forEach(oldSprite=>{
+      const replacement=foeArt(oldSprite.dataset.monsterKind);
+      if(replacement.dataset.atlasReady==='1'){
+        replacement.className=oldSprite.className;
+        oldSprite.replaceWith(replacement);
+      }
+    });
     if(typeof B!=='undefined'&&B&&!B.over&&typeof renderFoes==='function')renderFoes();
   };
   MONSTER_ATLAS_IMAGE.src='./assets/monsters/'+MONSTER_ATLAS_RUNTIME.image;
@@ -791,12 +792,90 @@ function drawMonsterAtlasFrame(g,c,kind){
   g.restore();return true;
 }
 
+/*
+ * 量產怪物不逐隻呼叫繪圖模型：六冊的一階怪物依種族挑選精繪母體，
+ * 再於 64px 畫布重配色、加上名稱主題紋章及輪廓零件。高階融合與 Boss
+ * 仍走原有的專屬程序美術，避免兩百多張圖片拖慢手機載入。
+ */
+const MONSTER_ATLAS_FAMILY_TEMPLATES={
+  plant:['rm1_1'],fox:['rm3_1','rm2_2'],beast:['rm2_2','rm1_10','rm4_6'],
+  horn:['rm4_6'],rabbit:['rm1_10'],insect:['rm3_3','rm5_6','rm6_8'],shell:['rm6_8'],
+  serpent:['rm4_2'],dragon:['rm5_7'],aqua:['rm5_7'],wing:['rm5_7'],
+  construct:['rm1_6','rm6_5'],spirit:['rm1_1']
+};
+function monsterAtlasVariantBase(kind){
+  if(MONSTER_ATLAS_RUNTIME&&MONSTER_ATLAS_RUNTIME.frames&&MONSTER_ATLAS_RUNTIME.frames[kind])return kind;
+  if(!/^rm[1-6]_\d+$/.test(String(kind)))return '';
+  const identity=monsterIdentity(kind),choices=MONSTER_ATLAS_FAMILY_TEMPLATES[identity.species.id];
+  return choices&&choices.length?choices[identity.hash%choices.length]:'';
+}
+function monsterRgb(hex,fallback){
+  const value=String(hex||'').match(/^#([0-9a-f]{6})$/i);
+  if(!value)return fallback;
+  const n=parseInt(value[1],16);return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function recolorMonsterVariant(g,c,kind){
+  const fm=FLOOR_MONSTER_LOOK[kind]||{},pal=monsterVividPalette(kind,fm),
+    main=monsterRgb(pal.col,[92,139,210]),shade=monsterRgb(pal.shade,[42,67,122]),hi=monsterRgb(pal.hi,[232,246,255]),
+    data=g.getImageData(0,0,c.width,c.height),p=data.data;
+  for(let i=0;i<p.length;i+=4){
+    if(p[i+3]<10)continue;
+    const lum=(p[i]*.299+p[i+1]*.587+p[i+2]*.114)/255;
+    if(lum<.16){p[i]=Math.round(shade[0]*.2);p[i+1]=Math.round(shade[1]*.2);p[i+2]=Math.round(shade[2]*.2);continue;}
+    const t=lum<.48?(lum-.16)/.32:(lum-.48)/.52,a=lum<.48?shade:main,b=lum<.48?main:hi;
+    p[i]=Math.round(a[0]+(b[0]-a[0])*t);p[i+1]=Math.round(a[1]+(b[1]-a[1])*t);p[i+2]=Math.round(a[2]+(b[2]-a[2])*t);
+  }
+  g.putImageData(data,0,0);
+}
+function drawMonsterVariantFeatures(g,kind){
+  const id=monsterIdentity(kind),accent=MONSTER_THEME_ACCENTS[id.theme.id]||'#fff18c',ink='#211631',h=id.hash,
+    ax=21+(h%20),ay=9+((h>>>4)%10),R=(x,y,w,h2,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h2);};
+  /* 四種可組合輪廓零件：雙角、耳羽、尾刺、肩晶；至少一項改變母體剪影。 */
+  switch((h>>>7)%4){
+    case 0:R(12,7,3,8,ink);R(49,7,3,8,ink);R(13,6,2,7,accent);R(49,6,2,7,accent);break;
+    case 1:R(6,23,7,3,ink);R(51,23,7,3,ink);R(5,20,6,3,accent);R(53,20,6,3,accent);break;
+    case 2:R(53,37,7,3,ink);R(58,34,3,3,ink);R(54,37,5,2,accent);break;
+    default:R(14,17,5,6,ink);R(45,17,5,6,ink);R(15,16,3,5,accent);R(46,16,3,5,accent);
+  }
+  /* 名稱主題紋章使用大像素，不畫細線，64px 手機畫面仍看得見。 */
+  if(id.theme.id==='geometry'){R(ax,ay+5,3,3,ink);R(ax+3,ay+2,3,3,ink);R(ax+6,ay+5,3,3,ink);R(ax+1,ay+5,7,2,accent);}
+  else if(id.theme.id==='chance'){R(ax,ay,9,9,ink);R(ax+2,ay+2,2,2,accent);R(ax+5,ay+5,2,2,accent);}
+  else if(id.theme.id==='crystal'){R(ax+3,ay,3,3,accent);R(ax,ay+3,9,4,ink);R(ax+2,ay+2,5,7,accent);}
+  else if(id.theme.id==='flame'){R(ax+3,ay,3,4,accent);R(ax,ay+4,9,5,ink);R(ax+2,ay+3,5,5,accent);}
+  else if(id.theme.id==='water'){R(ax+3,ay,3,3,accent);R(ax+1,ay+3,7,5,ink);R(ax+2,ay+3,5,4,accent);}
+  else if(id.theme.id==='shadow'){R(ax+2,ay,6,9,accent);R(ax+5,ay,4,6,ink);}
+  else if(id.theme.id==='star'){R(ax+3,ay,3,9,accent);R(ax,ay+3,9,3,accent);}
+  else {R(ax,ay+1,9,3,ink);R(ax,ay+6,9,3,ink);R(ax+1,ay+2,7,1,accent);R(ax+1,ay+6,7,1,accent);}
+}
+function drawMonsterAtlasVariant(g,c,kind,baseKind){
+  if(!baseKind||!drawMonsterAtlasFrame(g,c,baseKind))return false;
+  if(baseKind!==kind){recolorMonsterVariant(g,c,kind);drawMonsterVariantFeatures(g,kind);}
+  return true;
+}
+
+function monsterMotionProfile(kind){
+  const frame=MONSTER_ATLAS_RUNTIME&&MONSTER_ATLAS_RUNTIME.frames&&MONSTER_ATLAS_RUNTIME.frames[kind];
+  const species=frame&&frame.family||((monsterIdentity(kind).species||{}).id)||'beast';
+  if(species==='wing'||species==='aqua'||species==='spirit')return 'hover';
+  if(species==='insect'||species==='shell')return 'skitter';
+  if(species==='dragon'||species==='serpent')return 'coil';
+  if(species==='construct'||species==='horn')return 'stomp';
+  if(species==='plant'||species==='rabbit')return 'bounce';
+  return 'pounce';
+}
+
 function foeArt(kind){
   if(kind==='mathTeacherFinal')return teacherBattleArt();
-  const artTier=monsterTier(kind),hiRes=artTier>=4||!!(FOES[kind]&&FOES[kind].boss),c=document.createElement('canvas');c.width=c.height=hiRes?64:32;
+  const artTier=monsterTier(kind),hiRes=artTier>=4||!!(FOES[kind]&&FOES[kind].boss),
+    atlasBase=monsterAtlasVariantBase(kind),
+    c=document.createElement('canvas');
+  /* 圖集怪物直接保留 64×64 原生像素；未完成美術的程序怪仍維持 32px 輕量備援。 */
+  c.width=c.height=atlasBase?64:(hiRes?64:32);
+  c.dataset.monsterKind=kind;
   const g=c.getContext('2d');g.imageSmoothingEnabled=false;
-  if(drawMonsterAtlasFrame(g,c,kind))return c;
-  if(hiRes)g.scale(2,2);
+  if(drawMonsterAtlasVariant(g,c,kind,atlasBase)){c.dataset.atlasReady='1';return c;}
+  /* 圖集尚未下載完成時，先把 32px 程序備援完整放大到 64px，避免縮在左上角。 */
+  if(c.width===64)g.scale(2,2);
   const R=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(x,y,w,h);};
   if(drawUltimateFoe(g,kind,R)){addHighTierPixelDetails(g,kind,7,FLOOR_MONSTER_LOOK[kind]);return c;}
   const fm=FLOOR_MONSTER_LOOK[kind];
@@ -1184,7 +1263,8 @@ function monsterFullFx(f,label){
   const host=$('battleFullFx');if(!host||!f)return;
   host.className='';host.innerHTML='';host.appendChild(foeArt(f.art));
   const n=document.createElement('div');n.className='fxName';n.textContent=label||f.n+' 出手';host.appendChild(n);
-  host.classList.toggle('boss',!!f.boss);void host.offsetWidth;host.classList.add('go');
+  host.classList.add('motion-'+monsterMotionProfile(f.art));host.classList.toggle('boss',!!f.boss);
+  void host.offsetWidth;host.classList.add('go');
   clearTimeout(monsterFullFx._t);monsterFullFx._t=setTimeout(()=>{host.className='';host.innerHTML='';},720);
 }
 
@@ -1205,12 +1285,14 @@ function monsterAbilityFx(f){
     sy=parseFloat(el.style.top||fh*.35)+parseFloat(el.style.width||80)*.42,tx=fw*.5,ty=fh*.82;
   const group=monsterSkillGroupMeta(monsterBattleSkillGroup(f.battleType));
   const root=document.createElement('div');root.className='monsterSkillFx ms-'+f.battleType;
+  root.classList.add('motion-'+monsterMotionProfile(f.art),'mtier-'+Math.min(7,monsterTier(f.art)));
   root.style.setProperty('--mc',group.color);root.style.setProperty('--sx',sx+'px');root.style.setProperty('--sy',sy+'px');
   root.style.setProperty('--tx',tx+'px');root.style.setProperty('--ty',ty+'px');
   const title=document.createElement('div');title.className='ms-title';title.style.color=group.color;title.textContent=group.ic+' '+group.n+'｜'+(f.abilityName||f.n+'技能');root.appendChild(title);
   const sigil=document.createElement('div');sigil.className='ms-sigil';sigil.textContent=meta.glyph;root.appendChild(sigil);
   const ground=document.createElement('div');ground.className='ms-ground';root.appendChild(ground);
   const beam=document.createElement('div');beam.className='ms-beam';root.appendChild(beam);
+  const caster=foeArt(f.art);caster.className='ms-caster';root.appendChild(caster);
   for(let i=0;i<7;i++){
     const p=document.createElement('i');p.className='ms-particle';p.textContent=meta.bit;p.style.setProperty('--i',i);
     const ang=(i/7*Math.PI*2)+(Math.random()*.45),r=34+Math.random()*48;
@@ -1309,9 +1391,11 @@ function drawFieldBg(){
   fallback.addColorStop(0,`rgb(${fog[0]},${fog[1]},${fog[2]})`);
   fallback.addColorStop(1,'rgb(8,6,18)');
   g.fillStyle=fallback;g.fillRect(0,0,W,H);
-  // 背景沿用當下的第一人稱視角，不另切換到通用戰鬥場景。
+  // 背景沿用當層環境，但不把即時巡邏怪物烙進背景，避免戰場上同時出現兩批敵人。
   drawWeapon.skip=true;
+  render.staticBattleBackdrop=true;
   try{ render(); }catch(_){}
+  finally{render.staticBattleBackdrop=false;}
   drawWeapon.skip=false;
   g.imageSmoothingEnabled=false;
   const sc=Math.max(W/RW,H/RH),dw=RW*sc,dh=RH*sc;   // cover 填滿不變形
@@ -1377,7 +1461,7 @@ function renderFoes(){
       el.className='foe'+(f.fresh?' arrive':'');
       if(f.fresh&&f.delay) el.style.animationDelay=f.delay+'ms';
       el.id=f.uid;
-      el.appendChild(foeArt(f.art));
+      const sprite=foeArt(f.art);sprite.className='monsterSprite';el.appendChild(sprite);
       const info=document.createElement('div');
       info.className='inf';
       el.appendChild(info);
@@ -1392,6 +1476,8 @@ function renderFoes(){
       f.fresh=false;
     }
     el.classList.toggle('mathTeacherFoe',!!f.teacherBoss);
+    const motion=monsterMotionProfile(f.art);
+    ['hover','skitter','coil','stomp','bounce','pounce'].forEach(v=>el.classList.toggle('motion-'+v,v===motion));
     const locked=f.row===1&&rowOf(0).length>0;
     el.classList.toggle('back',f.row===1);
     el.classList.toggle('front',f.row===0);
@@ -1741,7 +1827,7 @@ function _playCard(i){
   if(c.back)B.hand.push(o);else if(!c.CURSE&&!c.TEMP)B.disc.push(o);
   if(c.draw)drawCards(c.draw);
   // 最終教師的推理護盾不會被一般傷害擊破；必須依序完成五張傳說卡。
-  const teacherFoe=B.teacherFinal&&B.foes.find(f=>f.teacherBoss);
+  const teacherFoe=(B.teacherFinal||B.teacherPrologue)&&B.foes.find(f=>f.teacherBoss);
   if(teacherFoe&&teacherFoe.hp<=0&&!B.teacherFinalFinishing){teacherFoe.hp=1;teacherFoe.dead=false;}
   const teacherFinisher=teacherFinalSequenceOnCard(o);
   // 集中偵測擊殺 → 子彈時間
@@ -1880,7 +1966,10 @@ function finishEnemyPhase(){
   B.foes.forEach(f=>{
     if(B.pvp){ f.act='atk'; f.intent=simDeckTurn(f.deck,f.job,5+Math.floor((B.pvp.lv||1)/3),5).dmg; }
     else if(f.boss){ /* Boss 不走一般攻擊，只由蓄力眼管理行動。 */ }
-    else if(f.teacherBoss){f.act='atk';f.intent=Math.max(12,Math.round(S.maxhp*.12));}
+    else if(f.teacherBoss){
+      f.act='atk';
+      f.intent=B.teacherPrologue?Math.max(28,Math.round(S.maxhp*.38)):Math.max(12,Math.round(S.maxhp*.12));
+    }
     else rollIntent(f);
   });
   B.disc.push(...B.hand);
@@ -2306,6 +2395,10 @@ function resolvePendingLevelUps(done){
 
 function queueBattleVictory(){
   if(!B||B.victoryFinalizing)return;
+  if(B.teacherPrologue){
+    const teacher=B.foes.find(f=>f.teacherBoss);if(teacher){teacher.hp=1;teacher.dead=false;renderAll();}
+    return;
+  }
   if(B.teacherFinal){B.victoryFinalizing=true;B.over=true;clearInterval(rTimer);setTimeout(hiddenTeacherVictory,900);return;}
   B.victoryQueued=true;B.busy=true;
   const finish=()=>{
@@ -2390,6 +2483,10 @@ function winBattle(){
 function loseGame(){
   if(B.pvp&&B.pvp.practice){ practiceEnd(false); return; }
   if(B.pvp){ duelLose(); return; }
+  if(B.teacherPrologue){
+    B.over=true;clearInterval(rTimer);clearBattleTemporaryState();saveChar();
+    setTimeout(()=>teacherPrologueFallen(0),320);return;
+  }
   if(B.teacherFinal){B.over=true;clearInterval(rTimer);clearBattleTemporaryState();setTimeout(hiddenTeacherRetry,350);return;}
   B.over=true;clearInterval(rTimer);clearBattleTemporaryState();saveChar();
   classroomDeathReported=!!classroomCheckpoint('death',{title:'地下城戰鬥倒下'});
@@ -2921,20 +3018,22 @@ function render(){
   for(const p of props)if(p.alive)list.push({x:p.x+.5,y:p.y+.5,t:'p',k:p.t==='npc'?'npc_'+p.k:p.t,al:0});
   // 一格 = 一支隊伍：畫成疊在一起的小群，一眼看出人數
   const CLUSTER=[[0,0,1],[-.28,.09,.86],[.27,.13,.83],[-.14,.2,.78]];
-  for(const o of otherList()){
-    list.push({x:o.x+.5,y:o.y+.5,t:'p',k:'ghost_'+(o.job||'geo'),al:0,ghost:o});
-  }
-  for(const r of rivals){
-    if(!r.alive)continue;
-    list.push({x:r.x+.5,y:r.y+.5,t:'p',k:'rival_'+r.k,al:r.chasing>0});
-  }
-  for(const m of mobs){
-    if(!m.alive)continue;
-    const show=Math.min(CLUSTER.length,m.size);
-    for(let i=show-1;i>=0;i--){
-      const [ox,oy,sc]=CLUSTER[i];
-      list.push({x:m.x+.5+ox,y:m.y+.5+oy,t:'mob',k:m.art,
-        al:m.state==='alert'&&i===0,boss:m.boss,csc:sc});
+  if(!render.staticBattleBackdrop){
+    for(const o of otherList()){
+      list.push({x:o.x+.5,y:o.y+.5,t:'p',k:'ghost_'+(o.job||'geo'),al:0,ghost:o});
+    }
+    for(const r of rivals){
+      if(!r.alive)continue;
+      list.push({x:r.x+.5,y:r.y+.5,t:'p',k:'rival_'+r.k,al:r.chasing>0});
+    }
+    for(const m of mobs){
+      if(!m.alive)continue;
+      const show=Math.min(CLUSTER.length,m.size);
+      for(let i=show-1;i>=0;i--){
+        const [ox,oy,sc]=CLUSTER[i];
+        list.push({x:m.x+.5+ox,y:m.y+.5+oy,t:'mob',k:m.art,
+          al:m.state==='alert'&&i===0,boss:m.boss,csc:sc});
+      }
     }
   }
   for(const e of list)e._d=(PX-e.x)**2+(PY-e.y)**2;
@@ -3335,13 +3434,12 @@ function introScreen(){
     ${S.job
       ? `<div class="hc1" style="color:${JOBS[S.job].col}">${JOBS[S.job].ic} ${S.name||'無名'}</div>
          <div class="hc2">${JOBS[S.job].n}　Lv.${S.lv}　◉ ${S.gold}</div>
-         <div class="hc3">通關 ${zoneN}/${ZONES.length} 區　✦ ${M.souls||0} 知識點　
-           ${M.totalQ?'答題正確率 '+Math.round((M.totalOk||0)/M.totalQ*100)+'%':'尚未作答'}</div>`
+         <div class="hc3">通關 ${zoneN}/${ZONES.length} 區　✦ ${M.souls||0} 知識點</div>`
       : `<div class="hc1" style="color:#a99ec9">尚未建立角色</div>
-         <div class="hc3">可以直接進地城，也可以先建立角色選職業</div>`}
+         <div class="hc3">進入後選擇區域，自行探索。</div>`}
   </div>
-  <div class="dungeon-wellbeing" role="note" aria-label="健康學習提醒"><i>🌿</i><span>適當學習數學有益身心成長，請勿沉迷地下城學習系統，也要安排戶外休閒活動～</span></div>
-  <button class="go" id="ok">⚔ 進入地城</button>
+  <div class="dungeon-wellbeing" role="note" aria-label="健康學習提醒"><i>🌿</i><span>適度學習、記得休息與戶外活動。</span></div>
+  <button class="go" id="ok">⚔ 進入地城・自行探索</button>
   <button class="go" id="menuOpen" style="background:linear-gradient(180deg,#8a7ab8,#5a4a86);border-color:#3a2c60">
     ☰ 選單${(S.wrong||[]).length?'　<span class="mgDot">'+(S.wrong||[]).length+'</span>':''}</button>
   ${classroomLaunch?'<button class="go" id="classroomReturn" style="background:linear-gradient(180deg,#4f8f70,#2d6147);border-color:#183d2a">🏫 回到班級系統</button>':''}`,

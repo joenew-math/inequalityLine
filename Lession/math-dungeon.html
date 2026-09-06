@@ -120,10 +120,12 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
 #mini{cursor:pointer}
 #swipeHint{position:absolute;bottom:8px;left:0;right:0;text-align:center;z-index:5;
   font-size:10px;color:#6f6490;pointer-events:none;line-height:1.6}
-#toast{position:fixed;bottom:32%;left:0;right:0;text-align:center;font-size:14px;font-weight:900;
-  color:#ecc24e;text-shadow:0 2px 0 #000,0 0 12px rgba(236,194,78,.7);opacity:0;transition:.3s;
-  z-index:50;pointer-events:none;padding:0 16px}
-#toast.on{opacity:1}
+#toast{position:fixed;top:max(10px,env(safe-area-inset-top));left:50%;width:max-content;max-width:min(92vw,720px);
+  transform:translate(-50%,-12px);text-align:center;font-size:14px;font-weight:900;line-height:1.45;
+  color:#ffe684;background:rgba(19,13,31,.94);border:2px solid #ecc24e;border-radius:8px;
+  box-shadow:0 5px 0 rgba(0,0,0,.55),0 0 16px rgba(236,194,78,.35);opacity:0;transition:.22s;
+  z-index:260;pointer-events:none;padding:8px 14px}
+#toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ================= BATTLE (太空戰士式) ================= */
 #battle{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:#05040c}
@@ -157,6 +159,19 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
   transition:left .38s cubic-bezier(.2,.9,.3,1),top .38s,width .38s,opacity .3s}
 .foe canvas{width:100%;image-rendering:pixelated;display:block;
   filter:drop-shadow(0 5px 0 rgba(0,0,0,.5))}
+/* 靜態母圖以輕量 CSS 製造不同種族的呼吸動態；不需下載 GIF 或同步影格。 */
+.foe:not(.acting).motion-hover .monsterSprite{animation:monsterIdleHover 1.55s ease-in-out infinite}
+.foe:not(.acting).motion-skitter .monsterSprite{animation:monsterIdleSkitter 1.15s steps(4) infinite}
+.foe:not(.acting).motion-coil .monsterSprite{animation:monsterIdleCoil 1.8s ease-in-out infinite}
+.foe:not(.acting).motion-stomp .monsterSprite{animation:monsterIdleStomp 1.45s steps(4) infinite}
+.foe:not(.acting).motion-bounce .monsterSprite{animation:monsterIdleBounce 1.35s ease-in-out infinite}
+.foe:not(.acting).motion-pounce .monsterSprite{animation:monsterIdlePounce 1.6s ease-in-out infinite}
+@keyframes monsterIdleHover{0%,100%{transform:translateY(2px) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg);filter:brightness(1.08)}}
+@keyframes monsterIdleSkitter{0%,100%{transform:translateX(-1px) translateY(1px)}25%{transform:translateX(2px)}50%{transform:translateX(-2px) translateY(-2px)}75%{transform:translateX(1px)}}
+@keyframes monsterIdleCoil{0%,100%{transform:scaleX(.98) rotate(-1.5deg)}50%{transform:scaleX(1.03) translateY(-3px) rotate(1.5deg)}}
+@keyframes monsterIdleStomp{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px) scaleY(1.02)}}
+@keyframes monsterIdleBounce{0%,100%{transform:translateY(1px) scale(1,.98)}50%{transform:translateY(-4px) scale(.98,1.03)}}
+@keyframes monsterIdlePounce{0%,100%{transform:translateY(1px) scale(1)}55%{transform:translateY(-2px) scale(1.015)}}
 .foe.arrive{animation:arrIn .5s cubic-bezier(.2,1.5,.4,1)}
 @keyframes arrIn{0%{opacity:0;transform:translateY(-40px) scale(.4)}100%{opacity:1;transform:none}}
 .foe.hurt{animation:hurtShake .22s}
@@ -229,6 +244,18 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
 @keyframes monsterRush{0%{opacity:0;transform:translateY(-16vh) scale(.35)}18%{opacity:.95}
   52%{opacity:1;transform:translateY(7vh) scale(1.28)}76%{filter:brightness(2.2);transform:translateY(11vh) scale(1.4)}
   100%{opacity:0;transform:translateY(18vh) scale(1.62)}}
+#battleFullFx.go.motion-hover canvas{animation:monsterCineHover .68s ease-out}
+#battleFullFx.go.motion-skitter canvas{animation:monsterCineSkitter .68s steps(5)}
+#battleFullFx.go.motion-coil canvas{animation:monsterCineCoil .68s ease-out}
+#battleFullFx.go.motion-stomp canvas{animation:monsterCineStomp .68s cubic-bezier(.2,.8,.2,1)}
+#battleFullFx.go.motion-bounce canvas{animation:monsterCineBounce .68s ease-out}
+#battleFullFx.go.motion-pounce canvas{animation:monsterCinePounce .68s cubic-bezier(.16,.9,.25,1)}
+@keyframes monsterCineHover{0%{transform:translate(-32vw,-12vh) rotate(-12deg)}58%{transform:translate(7vw,5vh) rotate(4deg)}100%{transform:translate(18vw,18vh) rotate(9deg)}}
+@keyframes monsterCineSkitter{0%{transform:translate(-28vw,-5vh) rotate(-5deg)}45%{transform:translate(5vw,8vh) rotate(7deg)}100%{transform:translate(26vw,14vh) rotate(-4deg)}}
+@keyframes monsterCineCoil{0%{transform:scale(.65) rotate(-24deg)}55%{transform:scale(1.18) rotate(8deg)}100%{transform:scale(1.35) rotate(22deg)}}
+@keyframes monsterCineStomp{0%{transform:translateY(-28vh) scale(.82)}64%{transform:translateY(10vh) scale(1.22, .9)}100%{transform:translateY(14vh) scale(1.35,1.05)}}
+@keyframes monsterCineBounce{0%{transform:translateY(-18vh) scale(.7)}45%{transform:translateY(2vh) scale(1.18,.84)}100%{transform:translateY(17vh) scale(.95,1.28)}}
+@keyframes monsterCinePounce{0%{transform:translate(-20vw,-12vh) scale(.68)}58%{transform:translate(4vw,5vh) scale(1.22)}100%{transform:translate(18vw,17vh) scale(1.42)}}
 
 /* 怪物物種技能：每次只建立一個容器與最多 7 顆粒子，避免怪群施法造成卡頓。 */
 .monsterSkillFx{position:absolute;inset:0;z-index:52;pointer-events:none;overflow:hidden;
@@ -246,6 +273,21 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
   display:none;box-shadow:0 0 9px 3px var(--mc);transform-origin:center;animation:msBeam .56s ease-in forwards}
 .ms-particle{position:absolute;left:var(--sx);top:var(--sy);font-style:normal;color:var(--mc);font-size:18px;
   text-shadow:0 0 9px var(--mc);animation:msParticle .75s calc(var(--i)*.035s) ease-out forwards}
+.ms-caster{position:absolute;left:var(--sx);top:var(--sy);width:76px;height:76px;margin:-38px;
+  object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 8px 0 rgba(0,0,0,.36)) drop-shadow(0 0 12px var(--mc));
+  animation:msCasterStrike .72s cubic-bezier(.18,.84,.24,1) forwards}
+.monsterSkillFx.motion-hover .ms-caster{animation-name:msCasterHover}
+.monsterSkillFx.motion-skitter .ms-caster{animation-name:msCasterSkitter;animation-timing-function:steps(5)}
+.monsterSkillFx.motion-coil .ms-caster{animation-name:msCasterCoil}
+.monsterSkillFx.motion-stomp .ms-caster{animation-name:msCasterStomp}
+.monsterSkillFx.motion-bounce .ms-caster{animation-name:msCasterBounce}
+.monsterSkillFx.mtier-6 .ms-caster,.monsterSkillFx.mtier-7 .ms-caster{width:96px;height:96px;margin:-48px;filter:drop-shadow(0 9px 0 rgba(0,0,0,.4)) drop-shadow(0 0 22px var(--mc))}
+@keyframes msCasterStrike{0%{opacity:.15;transform:translate(-18px,-12px) scale(.72)}38%{opacity:1;transform:translate(8px,7px) scale(1.12)}100%{opacity:0;transform:translate(calc(var(--tx) - var(--sx)),calc(var(--ty) - var(--sy))) scale(1.35)}}
+@keyframes msCasterHover{0%{opacity:0;transform:translate(-45px,-25px) rotate(-10deg)}42%{opacity:1;transform:translate(5px,-8px) rotate(2deg)}100%{opacity:0;transform:translate(calc(var(--tx) - var(--sx)),calc(var(--ty) - var(--sy))) rotate(12deg)}}
+@keyframes msCasterSkitter{0%{opacity:0;transform:translateX(-36px)}45%{opacity:1;transform:translate(12px,8px)}100%{opacity:0;transform:translate(calc(var(--tx) - var(--sx)),calc(var(--ty) - var(--sy)))}}
+@keyframes msCasterCoil{0%{opacity:0;transform:scale(.45) rotate(-35deg)}48%{opacity:1;transform:scale(1.15) rotate(7deg)}100%{opacity:0;transform:translate(calc(var(--tx) - var(--sx)),calc(var(--ty) - var(--sy))) rotate(28deg) scale(1.3)}}
+@keyframes msCasterStomp{0%{opacity:0;transform:translateY(-42px) scale(.8)}55%{opacity:1;transform:translateY(9px) scale(1.18,.88)}100%{opacity:0;transform:translateY(18px) scale(1.35,1)}}
+@keyframes msCasterBounce{0%{opacity:0;transform:translateY(22px) scale(.7)}48%{opacity:1;transform:translateY(-16px) scale(1.12)}100%{opacity:0;transform:translate(calc(var(--tx) - var(--sx)),calc(var(--ty) - var(--sy))) scale(.9,1.35)}}
 .ms-ward .ms-sigil{animation:msWard .78s ease-out forwards}.ms-ward .ms-ground{display:block;animation:msRing .72s ease-out forwards}
 .ms-hex .ms-sigil,.ms-venom .ms-sigil{left:var(--tx);top:var(--ty);animation:msHex .82s ease-out forwards}
 .ms-fury .ms-sigil{animation:msFury .78s ease-out forwards}.ms-fury .ms-particle{animation-name:msFlame}
@@ -274,7 +316,7 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
 @keyframes msShard{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(220deg)}}
 @keyframes msLeaf{0%{opacity:0;transform:translate(0,18px) rotate(0)}35%{opacity:1}100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) - 42px)) rotate(180deg)}}
 @keyframes msChaosBit{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(360deg);filter:hue-rotate(240deg)}}
-@media (prefers-reduced-motion:reduce){.monsterSkillFx{animation-duration:.25s}.monsterSkillFx *{animation-duration:.25s!important}}
+@media (prefers-reduced-motion:reduce){.monsterSkillFx{animation-duration:.25s}.monsterSkillFx *{animation-duration:.25s!important}.foe .monsterSprite{animation:none!important}}
 
 /* 接敵方位橫幅 */
 #openBanner{position:fixed;top:34%;left:0;right:0;text-align:center;z-index:56;
@@ -303,6 +345,19 @@ html,body{height:100%;overflow:hidden;background:#07050f;color:#f3ecff;
 .foe.attack{animation:foeAtk .42s ease-out}
 @keyframes foeAtk{0%,100%{transform:none}
   35%{transform:translateY(16px) scale(1.12);filter:brightness(1.5)}}
+.foe.attack.motion-hover .monsterSprite{animation:foeAttackHover .46s ease-out}
+.foe.attack.motion-skitter .monsterSprite{animation:foeAttackSkitter .46s steps(5)}
+.foe.attack.motion-coil .monsterSprite{animation:foeAttackCoil .5s ease-out}
+.foe.attack.motion-stomp .monsterSprite{animation:foeAttackStomp .5s cubic-bezier(.2,.8,.2,1)}
+.foe.attack.motion-bounce .monsterSprite{animation:foeAttackBounce .46s ease-out}
+.foe.attack.motion-pounce .monsterSprite{animation:foeAttackPounce .46s cubic-bezier(.15,.9,.3,1)}
+@keyframes foeAttackHover{0%,100%{transform:none}35%{transform:translate(13px,14px) rotate(8deg) scale(1.13)}}
+@keyframes foeAttackSkitter{0%,100%{transform:none}20%{transform:translate(-7px,4px)}55%{transform:translate(12px,14px) scale(1.12)}75%{transform:translate(6px,8px)}}
+@keyframes foeAttackCoil{0%,100%{transform:none}28%{transform:scale(.82) rotate(-9deg)}62%{transform:translateY(15px) scale(1.16) rotate(7deg)}}
+@keyframes foeAttackStomp{0%,100%{transform:none}30%{transform:translateY(-10px) scaleY(1.08)}62%{transform:translateY(13px) scale(1.14,.88)}}
+@keyframes foeAttackBounce{0%,100%{transform:none}35%{transform:translateY(-13px) scale(.92,1.12)}68%{transform:translateY(13px) scale(1.15,.88)}}
+@keyframes foeAttackPounce{0%,100%{transform:none}28%{transform:translate(-5px,-7px) scale(.92)}68%{transform:translate(10px,15px) scale(1.16)}}
+.foe.hurt .monsterSprite{filter:brightness(2.4) saturate(.25) drop-shadow(0 0 12px #fff)}
 .foe.acting{z-index:30!important}
 
 /* 接續 vs 重算 的視覺區分 */
@@ -1521,7 +1576,7 @@ button.go:active{transform:translateY(3px);box-shadow:0 2px 0 #5a3f0d}
 .teacher-alert{margin:4px auto 10px;width:72px;height:72px;display:grid;place-items:center;border:5px solid #24162f;border-radius:50%;background:#ffe25d;color:#c22;font:900 54px/1 monospace;box-shadow:0 0 0 5px #fff3a2,0 8px 0 #24162f;animation:teacherAlert .7s steps(2) infinite}
 .teacher-dialogue{display:flex;gap:14px;align-items:center;text-align:left;padding:12px;border:4px solid #24162f;border-radius:16px;background:#fff8df}.teacher-dialogue h1{font-size:22px;margin:0 0 7px}.teacher-dialogue p{margin:5px 0;line-height:1.55}.teacher-pixel{width:112px;height:112px;image-rendering:pixelated;flex:0 0 auto}
 .teacher-battle{position:relative;height:235px;overflow:hidden;border:5px solid #24162f;border-radius:18px;background:linear-gradient(#443467 0 58%,#21172f 59% 100%)}.teacher-pixel.battle{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:132px;height:132px}.teacher-book{position:absolute;left:52%;top:72px;font-size:36px;opacity:0;filter:drop-shadow(3px 4px 0 #24162f)}.teacher-battle.active .teacher-book{animation:teacherBookHit .65s steps(5) forwards}.teacher-battle.active .b2{animation-delay:.65s}.teacher-battle.active .b3{animation-delay:1.3s}.teacher-battle-line{position:absolute;left:8px;right:8px;bottom:8px;padding:7px;background:rgba(15,10,28,.82);border:2px solid #ffe38a;color:#fff3bf;font-weight:800}.teacher-player-hp{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin:10px 0;font-weight:900}.teacher-player-hp i{height:17px;border:3px solid #24162f;background:#2a1a30;overflow:hidden}.teacher-player-hp b{display:block;width:100%;height:100%;background:#62d276;transition:width 2.1s linear}
-.fallen-view{position:relative;height:210px;overflow:hidden;border:5px solid #24162f;border-radius:18px;background:linear-gradient(#35284f 0 52%,#1b1224 53%);perspective:260px}.fallen-floor{position:absolute;left:-15%;right:-15%;bottom:-65px;height:150px;background:repeating-linear-gradient(90deg,#392b45 0 38px,#24192e 39px 42px);transform:rotateX(64deg)}.fallen-vignette{position:absolute;inset:0;z-index:3;box-shadow:inset 0 0 60px 22px rgba(0,0,0,.82);pointer-events:none}.fallen-teacher{position:absolute;left:50%;top:14px;width:96px;height:96px;image-rendering:pixelated;transform:translateX(-50%) scale(.55);transform-origin:50% 80%;animation:teacherWalkCloser 1.1s steps(5) forwards}.fallen-view.step-1 .fallen-teacher{--walkScale:.72}.fallen-view.step-2 .fallen-teacher{--walkScale:.9}.fallen-view.step-3 .fallen-teacher{--walkScale:1.12}.teacher-lesson{font-size:17px;line-height:1.7;border-left:6px solid #ffe38a}.go:disabled{filter:grayscale(.7);opacity:.75}
+.fallen-view{position:relative;height:210px;overflow:hidden;border:5px solid #24162f;border-radius:18px;background:linear-gradient(#35284f 0 52%,#1b1224 53%);perspective:260px}.fallen-floor{position:absolute;left:-15%;right:-15%;bottom:-65px;height:150px;background:repeating-linear-gradient(90deg,#392b45 0 38px,#24192e 39px 42px);transform:rotateX(64deg)}.fallen-vignette{position:absolute;inset:0;z-index:3;box-shadow:inset 0 0 60px 22px rgba(0,0,0,.82);pointer-events:none}.fallen-teacher{position:absolute;left:50%;top:14px;width:96px;height:96px;image-rendering:pixelated;transform:translateX(-50%) scale(.9);transform-origin:50% 80%}.fallen-view.step-0 .fallen-teacher{--walkScale:.78;animation:teacherWalkCloser .62s steps(4) forwards}.fallen-view.step-1 .fallen-teacher{transform:translateX(-50%) scale(.96)}.teacher-lesson{font-size:17px;line-height:1.65;border:3px solid #d7a92d;border-left-width:7px;background:#fff4bf;color:#2a1b08!important;text-shadow:none!important}.go:disabled{filter:grayscale(.7);opacity:.75}
 .confiscation-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.confiscation-list span{padding:11px;border:3px solid #2b1b38;background:#fff5d1;font-weight:900}.confiscation-list b{float:right;color:#c23b37}.teacher-clue-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0;text-align:left}.teacher-clue-grid>div{padding:9px;border:3px dashed #66556f;background:#e8e0eb;color:#75687c}.teacher-clue-grid>div.found{border-style:solid;border-color:#d19c24;background:#fff3bd;color:#33223e}.teacher-clue-grid b,.teacher-clue-grid span{display:block}.teacher-clue-grid span{font-size:13px;margin-top:4px}.teacher-clue-award{display:grid;gap:4px;margin-top:12px;padding:10px;border:3px solid #d19c24;background:#fff1ad;color:#3b2743}.teacher-clue-award em{color:#a12a64;font-style:normal;font-weight:900}.teacher-final-stage{position:relative;padding:130px 12px 12px;border:5px solid #24162f;border-radius:18px;background:radial-gradient(circle at 50% 30%,#6b4e98,#1b1228 70%)}.teacher-final-stage .teacher-pixel{position:absolute;left:50%;top:2px;transform:translateX(-50%);width:124px;height:124px}.teacher-final-hp{display:grid;grid-template-columns:145px 1fr 45px;gap:7px;align-items:center;color:#fff;font-weight:900}.teacher-final-hp i{height:15px;border:2px solid #fff;background:#21172f;overflow:hidden}.teacher-final-hp b{display:block;height:100%;background:#be48d8;transition:width .25s}.teacher-final-hp.player b{background:#62d276}.teacher-sequence{display:flex;justify-content:center;gap:7px;margin-top:10px}.teacher-sequence span{width:31px;height:31px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;color:#fff;font-weight:900}.teacher-sequence .done{background:#54bd70}.teacher-sequence .now{background:#ffc72d;color:#30203c;animation:teacherAlert .7s steps(2) infinite}.teacher-card-hand{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}.teacher-card-hand button{min-height:112px;padding:6px;border:4px solid #2b1b38;border-radius:10px;background:linear-gradient(#fff3a2,#e8a93b);color:#2a1834;cursor:pointer}.teacher-card-hand small,.teacher-card-hand b,.teacher-card-hand span{display:block}.teacher-card-hand b{font-size:16px;margin:8px 0}.teacher-card-hand span{font-size:11px}@media(max-width:620px){.teacher-card-hand{grid-template-columns:repeat(3,1fr)}.teacher-clue-grid,.confiscation-list{grid-template-columns:1fr}.teacher-final-hp{grid-template-columns:110px 1fr 38px;font-size:12px}}
 .teacher-dialogue .teacher-pixel{width:96px;height:144px}.teacher-pixel.battle{top:2px;width:112px;height:168px}.fallen-teacher{width:80px;height:120px}.teacher-battle{height:270px;background:radial-gradient(circle at 50% 42%,#7454a4 0,#443467 32%,#21172f 72%)}
 .teacher-formula-ring{position:absolute;left:50%;top:18px;width:184px;height:184px;transform:translateX(-50%) scale(.25);border:3px dashed rgba(255,226,93,.9);border-radius:50%;opacity:0;box-shadow:0 0 20px #c37cff,inset 0 0 20px #78dfff}.teacher-formula-ring span{position:absolute;color:#fff3a2;font:900 20px/1 Georgia;text-shadow:0 0 8px #7de8ff}.teacher-formula-ring span:nth-child(1){left:79px;top:-10px}.teacher-formula-ring span:nth-child(2){right:0;top:78px}.teacher-formula-ring span:nth-child(3){left:76px;bottom:-11px}.teacher-formula-ring span:nth-child(4){left:-2px;top:76px}
@@ -1635,15 +1690,15 @@ button.go:active{transform:translateY(3px);box-shadow:0 2px 0 #5a3f0d}
 <div id="veil" class="veil"><div class="cw" id="veilCard"></div></div>
 
 <script src="../app/runtime-health.js"></script>
-<script src="question-bank-data.js?v=65"></script>
+<script src="question-bank-data.js?v=67"></script>
 <script src="./app/math-dungeon-data.js?v=65"></script>
 <script src="./app/math-dungeon-monster-data.js?v=65"></script>
 <script src="./app/math-dungeon-network.js?v=70"></script>
 <script src="./app/math-dungeon-classroom.js?v=65"></script>
 <script src="./app/math-dungeon-learning.js?v=65"></script>
 <script src="./app/math-dungeon-pets.js?v=65"></script>
-<script src="./assets/monsters/monster-atlas-foundation-v1.js?v=66"></script>
-<script src="./app/math-dungeon-gameplay.js?v=74"></script>
+<script src="./assets/monsters/monster-atlas-foundation-v1.js?v=68"></script>
+<script src="./app/math-dungeon-gameplay.js?v=77"></script>
 <script src="./app/math-dungeon.js?v=66" data-runtime-check="resetRun" data-runtime-label="地下城系統"></script>
 </body>
 </html>
